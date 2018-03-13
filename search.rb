@@ -47,7 +47,7 @@ class JSONParser
           author:    search_result["author"],
           body:      search_result["body"],
           created:   search_result["created_utc"],
-          link:      search_result["permalink"],
+          link:      "https://reddit.com#{search_result["permalink"]}",
           subreddit: search_result["subreddit"],
         }
       )
