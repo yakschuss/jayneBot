@@ -83,11 +83,10 @@ class DiscordPoster
   end
 
   def post
-    puts comment_dump
-    # bot.send_message(
-    #   423231205752963073,
-    #   comment_dump
-    # )
+    @bot.send_message(
+      423231205752963073,
+      comment_dump
+    )
   end
 
   def comment_dump
