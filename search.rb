@@ -11,14 +11,6 @@ class SearchWrapper
     results.flatten
   end
 
-  def parse(results)
-    JSONParser.new(results).parse
-  end
-
-  def post_to_discord(results)
-    DiscordPoster.new(results).post
-  end
-
   private
 
   def subreddits
@@ -78,8 +70,9 @@ class DiscordPoster
     @results = results
     @bot = Discordrb::Bot.new(
       client_id: 423227495311998976,
-      token: ENV["DISCORD_API_SECRET"],
+      token: ENV["DISCORD_BOT_TOKEN"],
     )
+    @bot.run :async
   end
 
   def post
@@ -87,6 +80,8 @@ class DiscordPoster
       423231205752963073,
       comment_dump
     )
+
+    @bot.sync
   end
 
   def comment_dump
@@ -97,22 +92,20 @@ class DiscordPoster
 
   def comment_format(search_result)
     """
-    --------------------------------------
-      Author: #{search_result.author} \n
-
-      Comment: #{search_result.body} \n
-
-      Permalink: #{search_result.link} \n
-
-      Subreddit: #{search_result.subreddit}
-    --------------------------------------
+    **--------------------------------------**
+      **Author:** #{search_result.author}
+      **Comment:** #{search_result.body}
+      **Permalink:** <#{search_result.link}>
+    **--------------------------------------**
     """
   end
 end
 
-wrapper = SearchWrapper.new
 
-search_results = wrapper.search
-parsed_results = wrapper.parse(search_results)
-wrapper.post_to_discord(parsed_results)
+search_results = SearchWrapper.new.search
+parsed_results = JSONParser.new(search_results).parse
+poster = DiscordPoster.new(parsed_results)
 
+poster.post
+
+poster.bot.stop
