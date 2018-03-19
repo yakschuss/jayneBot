@@ -95,7 +95,8 @@ class DiscordPoster
   end
 
   def comment_dump
-    @results.map do |result|
+    live_twitch_clip_comment = ->(result) { result.author == "LiveTwitchClips" }
+    @results.reject(&live_twitch_clip_comment).map do |result|
       comment_format(result)
     end
   end
