@@ -72,8 +72,9 @@ class DiscordPoster
       client_id: 423227495311998976,
       token: ENV["DISCORD_BOT_TOKEN"],
     )
-    @bot.run :async
   end
+
+  attr_accessor :bot
 
   def post
     comment_dump.each do |comment|
@@ -82,8 +83,6 @@ class DiscordPoster
         comment
       )
     end
-
-    @bot.sync
   end
 
   def comment_dump
@@ -110,4 +109,3 @@ poster = DiscordPoster.new(parsed_results)
 
 poster.post
 
-poster.bot.stop
