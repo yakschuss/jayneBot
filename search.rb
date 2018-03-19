@@ -22,7 +22,7 @@ class SearchWrapper
   end
 
   def comment_search_url(subreddit)
-    "https://api.pushshift.io/reddit/search/comment?q=jayne&after=1d&subreddit=#{subreddit}"
+    "https://api.pushshift.io/reddit/search/comment?q=jayne&before=10m&after=2d&subreddit=#{subreddit}"
   end
 end
 
@@ -76,10 +76,12 @@ class DiscordPoster
   end
 
   def post
-    @bot.send_message(
-      423231205752963073,
-      comment_dump
-    )
+    comment_dump.each do |comment|
+      @bot.send_message(
+        423231205752963073,
+        comment
+      )
+    end
 
     @bot.sync
   end
@@ -87,7 +89,7 @@ class DiscordPoster
   def comment_dump
     @results.map do |result|
       comment_format(result)
-    end.join("\n")
+    end
   end
 
   def comment_format(search_result)
