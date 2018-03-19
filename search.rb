@@ -5,13 +5,22 @@ class SearchWrapper
 
   def search
     results = subreddits.map do |subreddit|
-      HTTParty.get(comment_search_url(subreddit))["data"]
+      search_terms.map do |term|
+        HTTParty.get(comment_search_url(subreddit, term))["data"]
+      end
     end
 
     results.flatten
   end
 
   private
+
+  def search_terms
+    [
+      "deophest",
+      "jayne"
+    ]
+  end
 
   def subreddits
     [
@@ -21,8 +30,8 @@ class SearchWrapper
     ]
   end
 
-  def comment_search_url(subreddit)
-    "https://api.pushshift.io/reddit/search/comment?q=jayne&before=10m&after=2d&subreddit=#{subreddit}"
+  def comment_search_url(subreddit, term)
+    "https://api.pushshift.io/reddit/search/comment?q=#{term}&before=10m&after=2d&subreddit=#{subreddit}"
   end
 end
 
@@ -93,11 +102,9 @@ class DiscordPoster
 
   def comment_format(search_result)
     """
-    **--------------------------------------**
       **Author:** #{search_result.author}
       **Comment:** #{search_result.body}
       **Permalink:** <#{search_result.link}>
-    **--------------------------------------**
     """
   end
 end
