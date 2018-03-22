@@ -31,7 +31,7 @@ class SearchWrapper
   end
 
   def comment_search_url(subreddit, term)
-    "https://api.pushshift.io/reddit/search/comment?q=#{term}&before=10m&after=2d&subreddit=#{subreddit}"
+    "https://api.pushshift.io/reddit/search/comment?q=#{term}&after=2d&subreddit=#{subreddit}"
   end
 end
 
@@ -87,10 +87,14 @@ class DiscordPoster
 
   def post
     comment_dump.each do |comment|
-      @bot.send_message(
-        423231205752963073,
-        comment
-      )
+      begin
+        @bot.send_message(
+          423231205752963073,
+          comment
+        )
+      rescue
+        next
+      end
     end
   end
 
