@@ -27,6 +27,8 @@ class SearchWrapper
       "overwatchuniversity",
       "Competitiveoverwatch",
       "overwatch",
+      "livestreamfail",
+      "overwatchTMZ",
     ]
   end
 
