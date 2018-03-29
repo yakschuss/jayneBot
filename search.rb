@@ -33,7 +33,7 @@ class SearchWrapper
   end
 
   def comment_search_url(subreddit, term)
-    "https://api.pushshift.io/reddit/search/comment?q=#{term}&after=2d&subreddit=#{subreddit}"
+    "https://api.pushshift.io/reddit/search/comment?q=#{term}&after=1h&subreddit=#{subreddit}"
   end
 end
 
