@@ -6,7 +6,10 @@ class SearchWrapper
   def search
     results = subreddits.map do |subreddit|
       search_terms.map do |term|
-        HTTParty.get(comment_search_url(subreddit, term))["data"]
+        comments = HTTParty.get(comment_search_url(subreddit, term))["data"]
+        submissions = HTTParty.get(submission_search_url(subreddit, term))["data"]
+
+        comments + submissions
       end
     end
 
@@ -35,6 +38,10 @@ class SearchWrapper
   def comment_search_url(subreddit, term)
     "https://api.pushshift.io/reddit/search/comment?q=#{term}&after=1h&subreddit=#{subreddit}"
   end
+
+  def submission_search_url(subreddit, term)
+    "https://api.pushshift.io/reddit/search/submission?q=#{term}&after=1h&subreddit=#{subreddit}"
+  end
 end
 
 class JSONParser
@@ -52,6 +59,7 @@ class JSONParser
           created:   search_result["created_utc"],
           link:      "https://reddit.com#{search_result["permalink"]}",
           subreddit: search_result["subreddit"],
+          title:     search_result["title"],
         }
       )
     end
@@ -66,6 +74,7 @@ class SearchResult
     created
     link
     subreddit
+    title
   ]
 
   def initialize(attributes)
@@ -74,6 +83,11 @@ class SearchResult
   end
 
   attr_reader *SEARCH_ATTRIBUTES
+
+  def post?
+    body.nil?
+  end
+
 end
 
 class DiscordPoster
@@ -110,7 +124,7 @@ class DiscordPoster
   def comment_format(search_result)
     """
       **Author:** #{search_result.author}
-      **Comment:** #{search_result.body}
+      **Content:** #{search_result.post? ? search_result.title : search_result.body}
       **Permalink:** <#{search_result.link}>
     """
   end
