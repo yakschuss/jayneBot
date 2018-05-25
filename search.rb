@@ -105,7 +105,7 @@ class DiscordPoster
     comment_dump.each do |comment|
       begin
         @bot.send_message(
-          423231205752963073,
+          446593767172997140,
           comment
         )
       rescue
